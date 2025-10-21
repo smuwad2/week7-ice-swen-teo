@@ -36,10 +36,44 @@ export default {
     },
     methods: {
         editPost(id) {
+            // 1. Find the post that was clicked
+            const postToEdit = this.posts.find(item => item.id === id);
+
+            // 2. Populate the form with that post's data
+            this.entry = postToEdit.entry;
+            this.mood = postToEdit.mood;
             
+            // 3. Store the id so 'updatePost' knows which post to update
+            this.editPostId = id;
+
+            // 4. Show the edit form
+            this.showEditPost = true;
         },
         updatePost(event) {
-            
+            // 1. Send the updated data to the server
+            // We send the id as a query parameter, just as index.js expects
+            axios.post(`${this.baseUrl}/updatePost?id=${this.editPostId}`, {
+                entry: this.entry.trim(),
+                mood: this.mood.trim()
+            })
+            .then(response => {
+                console.log(response.data); // Log success message
+                
+                // 2. Hide the edit form
+                this.showEditPost = false;
+
+                // 3. Re-fetch all posts to update the table with the new data
+                axios.get(`${this.baseUrl}/posts`)
+                    .then(response => {
+                        this.posts = response.data;
+                    })
+                    .catch(error => {
+                        console.log(error.message);
+                    });
+            })
+            .catch(error => {
+                console.log(error.message);
+            });
         }
     }
 }
@@ -61,16 +95,16 @@ export default {
                     <td>{{ post.id }}</td>
                     <td>{{ post.entry }}</td>
                     <td>{{ post.mood }}</td>
-                    <td><button>Edit</button></td>
+                    <td><button @click="editPost(post.id)">Edit</button></td>
                 </tr>
             </tbody>
 
         </table>
-        <!-- TODO Show form for editing post only when edit button is clicked -->
+        
         <div id="editPost" v-if="showEditPost">
             <h3>Edit Post</h3>
             <div id="postContent" class="mx-3">
-                <form>
+                <form @submit.prevent="updatePost">
                     <div class="mb-3">
                         <label for="entry" class="form-label">Entry</label>
                         <textarea id="entry" class="form-control" v-model="entry" required></textarea>

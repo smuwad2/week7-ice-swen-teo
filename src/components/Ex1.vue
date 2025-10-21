@@ -9,6 +9,7 @@
                     case '-': return this.x - this.y;
                     case '*': return this.x * this.y;
                     case '/': return this.y !== 0 ? this.x / this.y : 'Error: Division by zero';
+                    case '%': return this.y !== 0 ? this.x % this.y : 'Error: Division by zero';
                     default: return 'Error: Unknown operator';
                 }
             }
@@ -18,7 +19,7 @@
                 x: 0,
                 y: 0,
                 selectedOp: '+',
-                operators: ['+', '-', '*', '/']
+                operators: ['+', '-', '*', '/', '%']
             }
         }
     }

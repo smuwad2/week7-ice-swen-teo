@@ -6,7 +6,6 @@ export default {
             items: ['keyboard', 'mouse', 'iPhone', 'macbook', 'adapter'],
             addeditem: ''
         }
-
     },
     methods: {
         deleteItem(index){
